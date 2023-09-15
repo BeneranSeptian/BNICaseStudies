@@ -49,6 +49,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -105,4 +108,6 @@ dependencies {
 
     // extended icon
     implementation ("androidx.compose.material:material-icons-extended:1.5.1")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 }

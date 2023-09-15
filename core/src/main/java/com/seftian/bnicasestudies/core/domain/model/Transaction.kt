@@ -4,5 +4,5 @@ data class Transaction(
     val id: String,
     val sourceBank: String,
     val merchantName: String,
-    val trxAmount: String,
+    val trxAmount: Long,
 )

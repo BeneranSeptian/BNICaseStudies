@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.seftian.bnicasestudies.core.data.local.entity.SaldoEntity
 import com.seftian.bnicasestudies.core.data.local.entity.TrxEntity
 import kotlinx.coroutines.flow.Flow
 

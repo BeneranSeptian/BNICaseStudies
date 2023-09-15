@@ -1,11 +1,9 @@
 package com.seftian.bnicasestudies.core.data
 
-import android.util.Log
 import com.seftian.bnicasestudies.core.data.local.LocalDataSource
 import com.seftian.bnicasestudies.core.data.local.entity.PromoEntity
 import com.seftian.bnicasestudies.core.data.remote.RemoteDataSource
 import com.seftian.bnicasestudies.core.data.remote.network.ResponseStatus
-import com.seftian.bnicasestudies.core.data.remote.response.PromoResponse
 import com.seftian.bnicasestudies.core.domain.ResourceState
 import com.seftian.bnicasestudies.core.domain.model.Img
 import com.seftian.bnicasestudies.core.domain.model.PromoItem

@@ -7,7 +7,6 @@ import com.seftian.bnicasestudies.core.data.local.entity.PromoEntity
 import com.seftian.bnicasestudies.core.data.local.entity.SaldoEntity
 import com.seftian.bnicasestudies.core.data.local.entity.TrxEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class LocalDataSource(
     private val saldoDao: SaldoDao,

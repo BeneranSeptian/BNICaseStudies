@@ -12,6 +12,6 @@ data class TrxEntity (
     val id: String,
     val sourceBank: String,
     val merchantName: String,
-    val trxAmount: String,
+    val trxAmount: Long,
     val createdAt: Long = System.currentTimeMillis()
 )

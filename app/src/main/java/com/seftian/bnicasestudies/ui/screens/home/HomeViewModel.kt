@@ -1,6 +1,5 @@
 package com.seftian.bnicasestudies.ui.screens.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.seftian.bnicasestudies.core.domain.ResourceState

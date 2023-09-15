@@ -1,16 +1,6 @@
 package com.seftian.bnicasestudies.ui.screens.home
 
 import android.Manifest
-import android.util.Log
-import android.view.RoundedCorner
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.camera.core.CameraProvider
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,13 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.QrCodeScanner
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,30 +40,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.common.util.concurrent.ListenableFuture
 import com.seftian.bnicasestudies.core.domain.ResourceState
 import com.seftian.bnicasestudies.core.domain.model.PromoItem
 import com.seftian.bnicasestudies.core.domain.model.Transaction
 import com.seftian.bnicasestudies.ui.Routes
-import com.seftian.bnicasestudies.util.BarcodeAnalyzer
 import com.seftian.bnicasestudies.util.Helper
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -92,31 +70,40 @@ fun HomeScreen(
 
     val cameraPermissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
     val cameraPermissionGranted = cameraPermissionState.status.isGranted
+    var hasRequestedPermission by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+    LaunchedEffect(cameraPermissionState.status) {
+        if (hasRequestedPermission && cameraPermissionState.status.isGranted) {
+            navController.navigate(Routes.QrScreen.route)
+            hasRequestedPermission = false
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Box(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            contentAlignment = Alignment.Center
+        ){
+            when (promos) {
+                is ResourceState.Error -> {
+                    Text("gagal memuat promosi")
+                }
 
-        when (promos) {
-            is ResourceState.Error -> {
-                Text("gagal memuat promosi")
-            }
+                is ResourceState.Success -> {
+                    val promoList = (promos as ResourceState.Success).data
+                    BannerComponent(
+                        bannerItemList = promoList, onClick = {
+                            navController.navigate(Routes.DetailPromo.withData(it.id))
+                        })
+                }
 
-            is ResourceState.Success -> {
-                val promoList = (promos as ResourceState.Success).data
-                BannerComponent(
-                    bannerItemList = promoList, onClick = {
-                        navController.navigate(Routes.DetailPromo.withData(it.id))
-                    })
-            }
-
-            ResourceState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.height(200.dp))
+                ResourceState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier)
+                }
             }
         }
 
@@ -125,6 +112,7 @@ fun HomeScreen(
         SaldoSection(
             onScanClick = {
                 if (!cameraPermissionGranted) {
+                    hasRequestedPermission = true
                     cameraPermissionState.launchPermissionRequest()
                 } else {
                     navController.navigate(Routes.QrScreen.route)
@@ -135,7 +123,10 @@ fun HomeScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-        HistoryTransactionSection(trxList = allTrx)
+
+        if(allTrx.isNotEmpty()){
+            HistoryTransactionSection(trxList = allTrx)
+        }
     }
 }
 
@@ -270,12 +261,13 @@ fun HistoryTransactionSection(
     modifier: Modifier = Modifier,
     trxList: List<Transaction>
 ) {
+
+    Text("Riwayat Transaksi", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+    Spacer(modifier = Modifier.height(16.dp))
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            Text("Riwayat Transaksi", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        }
         items(trxList) {
             TransactionItem(transaction = it)
         }
@@ -295,6 +287,6 @@ fun TransactionItem(
     ) {
         Text(text = transaction.id)
         Text(text = transaction.merchantName)
-        Text(text = transaction.trxAmount)
+        Text(text = Helper.convertLongToCurrencyString(transaction.trxAmount))
     }
 }

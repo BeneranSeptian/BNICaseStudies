@@ -1,7 +1,5 @@
 package com.seftian.bnicasestudies.ui
 
-import com.seftian.bnicasestudies.core.domain.model.PromoItem
-
 sealed class Routes(val route: String) {
     object Home: Routes("home")
     object PaymentDetail: Routes("payment_detail/{idQr}"){
