@@ -55,7 +55,7 @@ object AppModule {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-//            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(apiKeyInterceptor)
             .build()
 
         return Retrofit.Builder()

@@ -84,7 +84,8 @@ fun MainApp(
     }
 
     val currentBackStackEntry by navHostController.currentBackStackEntryAsState()
-    val showNavBar = bottomNavItems.any{currentBackStackEntry?.destination?.route == it.route}
+    val currentRoute = currentBackStackEntry?.destination?.route
+    val showNavBar = bottomNavItems.any{currentRoute == it.route}
 
     Scaffold(
         bottomBar = {
@@ -92,13 +93,13 @@ fun MainApp(
                 NavigationBar {
                     bottomNavItems.forEachIndexed { index, item ->
                         NavigationBarItem(
-                            selected = selectedItemIndex == index,
+                            selected = currentRoute == item.route,
                             onClick = {
                                 selectedItemIndex = index
                                 navHostController.navigate(item.route)
                             },
                             icon = {
-                                Icon(imageVector = if(selectedItemIndex == index) item.iconSelected else item.icon, contentDescription = item.label)
+                                Icon(imageVector = if(currentRoute == item.route) item.iconSelected else item.icon, contentDescription = item.label)
                             },
                             label = {Text(item.label)}
                         )
@@ -121,7 +122,7 @@ fun MainApp(
                 if (idQr != null) {
                     PaymentDetailScreen(idQr, navController = navHostController)
                 } else {
-                    Text("Error: No Game ID provided.")
+                    Text("Error")
                 }
             }
 

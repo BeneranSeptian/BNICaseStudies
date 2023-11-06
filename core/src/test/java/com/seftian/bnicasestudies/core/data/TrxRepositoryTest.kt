@@ -33,15 +33,12 @@ class TrxRepositoryTest{
     fun `when getAllTransactions is called, it should return transactions from local data source`() = run {
         runTest {
             val trxLocalList = listOf(
-                // Sample data for a TrxEntity, repeat as necessary
                 TrxEntity(id = "1", sourceBank = "BankA", merchantName = "MerchantA", trxAmount = 1000)
             )
             every { localDataSource.getAllTrx() } returns flowOf(trxLocalList)
 
-            // Act
             val result = trxRepository.getAllTransactions().first()
 
-            // Assert
             coVerify { localDataSource.getAllTrx() }
             assert(result.size == trxLocalList.size)
         }
@@ -59,10 +56,8 @@ class TrxRepositoryTest{
                         it.trxAmount == transaction.trxAmount
             }) } just Runs
 
-            // Act
             trxRepository.insertTrx(transaction)
 
-            // Assert
             coVerify { localDataSource.insertTrx(match {
                 it.id == transaction.id &&
                         it.sourceBank == transaction.sourceBank &&
